@@ -1,6 +1,186 @@
-#root {
-  max-width: 1280px;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg-color: #0d1117; /* Глубокий темный фон */
+  --column-bg: rgba(22, 27, 34, 0.6); /* Полупрозрачные колонки */
+  --card-bg: #1f242d;
+  --text-main: #e6edf3;
+  --text-muted: #8b949e;
+  --accent: #7c3aed; /* Более благородный фиолетовый */
+  --accent-hover: #6d28d9;
+  --danger: #f85149;
+  --border-color: #30363d;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* Главный контейнер */
+.app-container {
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 60px 24px;
+  min-height: 100vh;
+}
+
+/* Заголовок */
+h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 40px;
   text-align: center;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+}
+
+/* Форма добавления */
+.add-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 48px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.add-form input {
+  flex: 1;
+  padding: 12px 16px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.add-form input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+}
+
+.add-form button {
+  padding: 12px 20px;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-form button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Колонки */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.column {
+  background-color: var(--column-bg);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  min-height: 300px;
+}
+
+.column h3 {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Карточки задач */
+.task-card {
+  background-color: var(--card-bg);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.task-card:hover {
+  border-color: #484f58;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.task-title {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-main);
+  word-break: break-word;
+}
+
+/* Кнопки в карточке */
+.task-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.task-actions button {
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background-color: transparent;
+  color: var(--text-main);
+}
+
+.task-actions button:hover {
+  background-color: #30363d;
+}
+
+.task-actions button.delete-btn {
+  color: var(--danger);
+  border-color: transparent;
+  margin-left: auto;
+  padding: 6px 8px;
+}
+
+.task-actions button.delete-btn:hover {
+  background-color: rgba(248, 81, 73, 0.1);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .board {
+    grid-template-columns: 1fr;
+  }
+  h1 {
+    font-size: 1.8rem;
+  }
 }
