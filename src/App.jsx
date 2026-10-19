@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import './App.css';
 
 // Наши настройки GitHub
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
@@ -29,7 +30,6 @@ const loadTasks = async () => {
       { headers: { Authorization: `token ${GITHUB_TOKEN}` } }
     );
     
-    // Декодируем base64 с поддержкой кириллицы
     const base64Content = response.data.content.replace(/\s/g, '');
     const content = decodeURIComponent(
       atob(base64Content)
@@ -49,8 +49,6 @@ const loadTasks = async () => {
 const saveTasks = async (tasks) => {
   try {
     const sha = await getFileSha();
-    
-    // Кодируем в base64 с поддержкой кириллицы
     const content = btoa(
       unescape(
         encodeURIComponent(JSON.stringify(tasks, null, 2))
@@ -80,7 +78,7 @@ export default function App() {
 
   // Загружаем задачи при старте и обновляем каждые 5 секунд
   useEffect(() => {
-    let isMounted = true; // Защита от утечек памяти
+    let isMounted = true;
 
     const fetchData = async () => {
       const data = await loadTasks();
@@ -90,19 +88,15 @@ export default function App() {
       }
     };
 
-    fetchData(); // Первая загрузка
-
-    // Проверяем обновления каждые 5 секунд
+    fetchData();
     const interval = setInterval(fetchData, 5000);
 
-    // Очистка при закрытии компонента
     return () => {
       isMounted = false;
       clearInterval(interval);
     };
   }, []);
 
-  // Добавление новой задачи
   const addTask = async (e) => {
     e.preventDefault();
     if (!newTaskTitle.trim()) return;
@@ -110,7 +104,7 @@ export default function App() {
     const newTask = {
       id: Date.now().toString(),
       title: newTaskTitle,
-      status: 'todo', // todo, in-progress, done
+      status: 'todo',
     };
 
     const updatedTasks = [...tasks, newTask];
@@ -119,7 +113,6 @@ export default function App() {
     await saveTasks(updatedTasks);
   };
 
-  // Перемещение задачи (смена статуса)
   const moveTask = async (taskId, newStatus) => {
     const updatedTasks = tasks.map((t) =>
       t.id === taskId ? { ...t, status: newStatus } : t
@@ -128,16 +121,14 @@ export default function App() {
     await saveTasks(updatedTasks);
   };
 
-  // Удаление задачи
   const deleteTask = async (taskId) => {
     const updatedTasks = tasks.filter((t) => t.id !== taskId);
     setTasks(updatedTasks);
     await saveTasks(updatedTasks);
   };
 
-  if (isLoading) return <div style={{ padding: '20px' }}>Загрузка доски...</div>;
+  if (isLoading) return <div style={{ padding: '20px', color: 'white' }}>Загрузка доски...</div>;
 
-  // Колонки
   const columns = [
     { id: 'todo', title: 'To Do (Сделать)' },
     { id: 'in-progress', title: 'In Progress (В работе)' },
@@ -145,38 +136,31 @@ export default function App() {
   ];
 
   return (
-    <div style={{ fontFamily: 'sans-serif', padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="app-container">
       <h1>Рабочая доска команды</h1>
       
-      {/* Форма добавления */}
-      <form onSubmit={addTask} style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+      <form onSubmit={addTask} className="add-form">
         <input
           type="text"
           value={newTaskTitle}
           onChange={(e) => setNewTaskTitle(e.target.value)}
-          placeholder="Название новой задачи..."
-          style={{ padding: '10px', flex: 1, fontSize: '16px' }}
+          placeholder="Что нужно сделать?"
         />
-        <button type="submit" style={{ padding: '10px 20px', fontSize: '16px', cursor: 'pointer' }}>
-          Добавить
-        </button>
+        <button type="submit">Добавить</button>
       </form>
 
-      {/* Канбан-доска */}
-      <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+      <div className="board">
         {columns.map((col) => (
-          <div key={col.id} style={{ flex: 1, background: '#f4f5f7', padding: '15px', borderRadius: '8px' }}>
-            <h3 style={{ marginTop: 0 }}>{col.title}</h3>
+          <div key={col.id} className="column">
+            <h3>{col.title}</h3>
             
-            {/* Список задач в колонке */}
             {tasks.filter((t) => t.status === col.id).map((task) => (
-              <div key={task.id} style={{ background: 'white', padding: '10px', marginBottom: '10px', borderRadius: '4px', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>{task.title}</div>
+              <div key={task.id} className="task-card">
+                <div className="task-title">{task.title}</div>
                 
-                {/* Кнопки управления */}
-                <div style={{ display: 'flex', gap: '5px', fontSize: '12px' }}>
+                <div className="task-actions">
                   {col.id !== 'todo' && (
-                    <button onClick={() => moveTask(task.id, 'todo')}>← В To Do</button>
+                    <button onClick={() => moveTask(task.id, 'todo')}>← To Do</button>
                   )}
                   {col.id !== 'in-progress' && (
                     <button onClick={() => moveTask(task.id, 'in-progress')}>В Работу</button>
@@ -184,7 +168,7 @@ export default function App() {
                   {col.id !== 'done' && (
                     <button onClick={() => moveTask(task.id, 'done')}>Готово →</button>
                   )}
-                  <button onClick={() => deleteTask(task.id)} style={{ color: 'red', marginLeft: 'auto' }}>Удалить</button>
+                  <button className="delete-btn" onClick={() => deleteTask(task.id)}>Удалить</button>
                 </div>
               </div>
             ))}
